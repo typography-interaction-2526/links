@@ -18,7 +18,7 @@ let channelSlug = 'typography-and-interaction-too' // The “slug” is just the
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
 let placeChannelInfo = async (data) => {
-	await markdownIt // Wait for the library to load.
+	await markdownIt // Wait for the library to load, `async`.
 
 	// Target some elements in your HTML:
 	let channelTitle = document.querySelector('#channel-title')
@@ -168,7 +168,8 @@ let renderChannelUsers = (data) => {
 }
 
 
-// Now that we have said what we can do, go get the data:
+
+// Now that we have said all the things we can do, go get the data:
 fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
 	.then((response) => response.json()) // Return it as JSON data
 	.then((data) => { // Do stuff with the data.
