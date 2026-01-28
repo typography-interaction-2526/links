@@ -1,4 +1,4 @@
-// This allows us to process/render the descriptions, which are in Markdown!
+// This library allows us to process/render the descriptions, which are returned in Markdown!
 // More about Markdown: https://en.wikipedia.org/wiki/Markdown
 const markdownIt = new Promise((resolve) =>
 	document.head.appendChild(
