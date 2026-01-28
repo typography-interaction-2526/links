@@ -1,11 +1,10 @@
 // This allows us to process/render the descriptions, which are in Markdown!
 // More about Markdown: https://en.wikipedia.org/wiki/Markdown
-let markdownIt = new Promise((resolve, reject) => {
+let markdownIt = new Promise((resolve) => {
 	let script = document.createElement('script')
 
 	script.src = 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js'
 	script.onload = resolve
-	script.onerror = reject
 
 	document.head.appendChild(script)
 })
