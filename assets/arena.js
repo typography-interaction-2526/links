@@ -142,29 +142,29 @@ let renderBlock = (block) => {
 
 
 
-// It‘s always good to credit your work:
-let renderUser = (user, container) => { // You can have multiple arguments for a function!
-	let userAddress =
-		`
-		<address>
-			<img src="${ user.avatar_image.display }">
-			<h3>${ user.first_name }</h3>
-			<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
-		</address>
-		`
-
-	container.insertAdjacentHTML('beforeend', userAddress)
-}
-
 // Also display the owner and collaborators:
 let renderChannelUsers = (data) => {
-		let channelUsers = document.querySelector('#channel-users') // Container here for both.
+	let channelUsers = document.querySelector('#channel-users') // Container here for both.
 
-		// Collaborators can be multiple.
-		data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
+	// You can have functions *inside* other functions, when they are only used there!
+	let renderUser = (user, container) => { // You also can have multiple arguments for a function!
+		let userAddress =
+			`
+			<address>
+				<img src="${ user.avatar_image.display }">
+				<h3>${ user.first_name }</h3>
+				<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
+			</address>
+			`
 
-		// There is only one owner.
-		renderUser(data.owner, channelUsers)
+		container.insertAdjacentHTML('beforeend', userAddress)
+	}
+
+	// Collaborators can be multiple.
+	data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
+
+	// There is only one owner.
+	renderUser(data.owner, channelUsers)
 }
 
 
