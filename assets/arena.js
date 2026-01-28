@@ -49,6 +49,7 @@ let renderBlock = (block) => {
 				<p><a href="${ block.source.url }">See the original ↗</a></p>
 			</li>
 			`
+
 		channelBlocks.insertAdjacentHTML('beforeend', linkItem)
 	}
 
@@ -76,7 +77,9 @@ let renderBlock = (block) => {
 					<video controls src="${ block.attachment.url }"></video>
 				</li>
 				`
+
 			channelBlocks.insertAdjacentHTML('beforeend', videoItem)
+
 			// More on video, like the `autoplay` attribute:
 			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 		}
@@ -96,7 +99,9 @@ let renderBlock = (block) => {
 					<audio controls src="${ block.attachment.url }"></video>
 				</li>
 				`
+
 			channelBlocks.insertAdjacentHTML('beforeend', audioItem)
+
 			// More on audio: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
 		}
 	}
@@ -115,7 +120,9 @@ let renderBlock = (block) => {
 					${ block.embed.html }
 				</li>
 				`
+
 			channelBlocks.insertAdjacentHTML('beforeend', linkedVideoItem)
+
 			// More on iframe: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
 		}
 
@@ -138,6 +145,7 @@ let renderUser = (user, container) => { // You can have multiple arguments for a
 			<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
 		</address>
 		`
+
 	container.insertAdjacentHTML('beforeend', userAddress)
 }
 
@@ -146,18 +154,21 @@ let renderUser = (user, container) => { // You can have multiple arguments for a
 // Now that we have said what we can do, go get the data:
 fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
 	.then((response) => response.json()) // Return it as JSON data
-	.then((data) => { // Do stuff with the data
+	.then((data) => { // Do stuff with the data.
 		console.log(data) // Always good to check your response!
-		placeChannelInfo(data) // Pass the data to the first function
+
+		placeChannelInfo(data) // Pass the data to the first function.
 
 		// Loop through the `contents` array (list), backwards. Are.na returns them in reverse!
 		data.contents.reverse().forEach((block) => {
-			// console.log(block) // The data for a single block
-			renderBlock(block) // Pass the single block data to the render function
+			// console.log(block) // The data for a single block.
+			renderBlock(block) // Pass the single block data to the render function.
 		})
 
 		// Also display the owner and collaborators:
-		let channelUsers = document.querySelector('#channel-users') // Show them together
+		let channelUsers = document.querySelector('#channel-users') // Show them together.
+
 		data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
+
 		renderUser(data.user, channelUsers)
 	})
