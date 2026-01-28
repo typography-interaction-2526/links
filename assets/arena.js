@@ -42,6 +42,7 @@ let renderBlock = (block) => {
 
 	// Links!
 	if (block.class == 'Link') {
+		// Declares a “template literal” of the dynamic HTML we want.
 		let linkItem =
 			`
 			<li>
@@ -57,7 +58,11 @@ let renderBlock = (block) => {
 			</li>
 			`
 
+		// And puts it into the page!
 		channelBlocks.insertAdjacentHTML('beforeend', linkItem)
+
+		// More on template literals:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 	}
 
 	// Images!
@@ -87,7 +92,7 @@ let renderBlock = (block) => {
 
 			channelBlocks.insertAdjacentHTML('beforeend', videoItem)
 
-			// More on video, like the `autoplay` attribute:
+			// More on `video`, like the `autoplay` attribute:
 			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 		}
 
@@ -109,7 +114,8 @@ let renderBlock = (block) => {
 
 			channelBlocks.insertAdjacentHTML('beforeend', audioItem)
 
-			// More on audio: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+			// More on`audio`:
+			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
 		}
 	}
 
@@ -130,7 +136,8 @@ let renderBlock = (block) => {
 
 			channelBlocks.insertAdjacentHTML('beforeend', linkedVideoItem)
 
-			// More on iframe: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+			// More on `iframe`:
+			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
 		}
 
 		// Linked audio!
@@ -142,7 +149,7 @@ let renderBlock = (block) => {
 
 
 
-// Also display the owner and collaborators:
+// A function to display the owner and collaborators:
 let renderChannelUsers = (data) => {
 	let channelUsers = document.querySelector('#channel-users') // Container here for both.
 
@@ -169,7 +176,7 @@ let renderChannelUsers = (data) => {
 
 
 
-// Now that we have said all the things we can do, go get the data:
+// Now that we have said all the things we *can* do, go get the data:
 fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
 	.then((response) => response.json()) // Return it as JSON data
 	.then((data) => { // Do stuff with the data.
