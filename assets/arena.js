@@ -1,8 +1,14 @@
 // This allows us to process/render the descriptions, which are in Markdown!
 // More about Markdown: https://en.wikipedia.org/wiki/Markdown
-let markdownIt = document.createElement('script')
-markdownIt.src = 'https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js'
-document.head.appendChild(markdownIt)
+let markdownIt = new Promise((resolve, reject) => {
+	let script = document.createElement('script')
+
+	script.src = 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js'
+	script.onload = resolve
+	script.onerror = reject
+
+	document.head.appendChild(script)
+})
 
 
 
@@ -12,7 +18,9 @@ let channelSlug = 'typography-and-interaction-too' // The “slug” is just the
 
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
-let placeChannelInfo = (data) => {
+let placeChannelInfo = async (data) => {
+	await markdownIt // Wait for the library to load.
+
 	// Target some elements in your HTML:
 	let channelTitle = document.querySelector('#channel-title')
 	let channelDescription = document.querySelector('#channel-description')
