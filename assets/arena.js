@@ -156,6 +156,16 @@ let renderUser = (user, container) => { // You can have multiple arguments for a
 	container.insertAdjacentHTML('beforeend', userAddress)
 }
 
+// Also display the owner and collaborators:
+let renderChannelUsers = (data) => {
+		let channelUsers = document.querySelector('#channel-users') // Container here for both.
+
+		// Collaborators can be multiple.
+		data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
+
+		// There is only one owner.
+		renderUser(data.owner, channelUsers)
+}
 
 
 // Now that we have said what we can do, go get the data:
@@ -172,10 +182,5 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
 			renderBlock(block) // Pass the single block data to the render function.
 		})
 
-		// Also display the owner and collaborators:
-		let channelUsers = document.querySelector('#channel-users') // Show them together.
-
-		data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
-
-		renderUser(data.user, channelUsers)
+		renderChannelUsers(data) // And data for our users.
 	})
