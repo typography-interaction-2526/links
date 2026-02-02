@@ -156,40 +156,41 @@ let renderUser = (userData) => {
 
 
 
-// Now that we have said all the things we *can* do, go get the channel data:
-fetch(`https://api.are.na/v3/channels/${channelSlug}`, { cache: 'no-store' })
-	.then((response) => response.json()) // Return it as JSON.
-	.then((json) => { // Do stuff with the data.
-		console.log(json) // Always good to check your response!
-
-		placeChannelInfo(json) // Pass all the data to the first function, above.
-		renderUser(json.owner) // Pass just the nested object `.owner`.
-	})
+// Finally, a helper function to fetch data from the API, then run a callback function with it:
+let fetchJson = (url, callback) => {
+	fetch(url, { cache: 'no-store' })
+		.then((response) => response.json())
+		.then((json) => callback(json))
+}
 
 // More on `fetch`:
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch
 
 
 
-// Get your info to put with the owner’s:
-fetch(`https://api.are.na/v3/users/${myUsername}/`, { cache: 'no-store' })
-	.then((response) => response.json())
-	.then((json) => {
-		renderUser(json) // Pass this to the same function.
-	})
+// Now that we have said all the things we *can* do, go get the channel data:
+fetchJson(`https://api.are.na/v3/channels/${channelSlug}`, (json) => {
+	console.log(json) // Always good to check your response!
 
+	placeChannelInfo(json) // Pass all the data to the first function, above.
+	renderUser(json.owner) // Pass just the nested object `.owner`.
+})
 
+// Get your info to put with the owner's:
+fetchJson(`https://api.are.na/v3/users/${myUsername}/`, (json) => {
+	console.log(json) // See what we get back.
+
+	renderUser(json) // Pass this to the same function, no nesting.
+})
 
 // And the data for the blocks:
-fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=position_desc`, { cache: 'no-store' })
-	.then((response) => response.json())
-	.then((json) => {
-		console.log(json) // See what we get back.
+fetchJson(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=position_desc`, (json) => {
+	console.log(json) // See what we get back.
 
-		// Loop through the nested `.data` array (list).
-		json.data.forEach((blockData) => {
-			// console.log(blockData) // The data for a single block.
+	// Loop through the nested `.data` array (list).
+	json.data.forEach((blockData) => {
+		// console.log(blockData) // The data for a single block.
 
-			renderBlock(blockData) // Pass the single block’s data to the render function.
-		})
+		renderBlock(blockData) // Pass the single block’s data to the render function.
 	})
+})
