@@ -1,4 +1,3 @@
-// Okay, Are.na stuff!
 let channelSlug = 'typography-and-interaction-too' // The “slug” is just the end of the URL
 
 
@@ -138,29 +137,20 @@ let renderBlock = (block) => {
 
 
 
-// A function to display the owner and collaborators:
-let renderChannelUsers = (data) => {
-	let channelUsers = document.querySelector('#channel-users') // Container here for both.
+// A function to display the owner/collaborator info:
+let renderUser = (user) => {
+	let channelUsers = document.querySelector('#channel-users') // Container.
 
-	// You can have functions *inside* other functions, when they are only used there!
-	let renderUser = (user, container) => { // You also can have multiple arguments for a function!
-		let userAddress =
-			`
-			<address>
-				<img src="${ user.avatar_image.display }">
-				<h3>${ user.first_name }</h3>
-				<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
-			</address>
-			`
+	let userAddress =
+		`
+		<address>
+			<img src="${ user.avatar }">
+			<h3>${ user.name }</h3>
+			<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
+		</address>
+		`
 
-		container.insertAdjacentHTML('beforeend', userAddress)
-	}
-
-	// Collaborators can be multiple.
-	data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
-
-	// There is only one owner.
-	renderUser(data.owner, channelUsers)
+	channelUsers.insertAdjacentHTML('beforeend', userAddress)
 }
 
 
@@ -168,20 +158,22 @@ let renderChannelUsers = (data) => {
 // Now that we have said all the things we *can* do, go get the channel data:
 fetch(`https://api.are.na/v3/channels/${channelSlug}`, { cache: 'no-store' })
 	.then((response) => response.json()) // Return it as JSON.
-	.then((data) => { // Do stuff with the data.
-		console.log(data) // Always good to check your response!
+	.then((json) => { // Do stuff with the data.
+		console.log(json) // Always good to check your response!
 
-		placeChannelInfo(data) // Pass the data to the first function.
+		placeChannelInfo(json) // Pass the data to the first function.
+
+		renderUser(json.owner)
 	})
 
 // And the data for the blocks:
 fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=position_desc`, { cache: 'no-store' })
 	.then((response) => response.json())
-	.then((data) => {
-		console.log(data) // See what we get back.
+	.then((json) => {
+		console.log(json) // See what we get back.
 
 		// Loop through the nested `data` array (list).
-		data.data.forEach((block) => {
+		json.data.forEach((block) => {
 			// console.log(block) // The data for a single block.
 			renderBlock(block) // Pass the single block data to the render function.
 		})
