@@ -28,8 +28,8 @@ let placeChannelInfo = async (data) => {
 
 	// Then set their content/attributes to our data:
 	channelTitle.innerHTML = data.title
-	channelDescription.innerHTML = window.markdownit().render(data.metadata.description) // Converts Markdown → HTML
-	channelCount.innerHTML = data.length
+	channelDescription.innerHTML = data.description.html
+	channelCount.innerHTML = data.counts.blocks
 	channelLink.href = `https://www.are.na/channel/${channelSlug}`
 }
 
@@ -176,19 +176,11 @@ let renderChannelUsers = (data) => {
 
 
 
-// Now that we have said all the things we *can* do, go get the data:
-fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
-	.then((response) => response.json()) // Return it as JSON data
+// Now that we have said all the things we *can* do, go get the channel data:
+fetch(`https://api.are.na/v3/channels/${channelSlug}`, { cache: 'no-store' })
+	.then((response) => response.json()) // Return it as JSON.
 	.then((data) => { // Do stuff with the data.
 		console.log(data) // Always good to check your response!
 
 		placeChannelInfo(data) // Pass the data to the first function.
-
-		// Loop through the `contents` array (list), backwards. Are.na returns them in reverse!
-		data.contents.reverse().forEach((block) => {
-			// console.log(block) // The data for a single block.
-			renderBlock(block) // Pass the single block data to the render function.
-		})
-
-		renderChannelUsers(data) // And data for our users.
 	})
