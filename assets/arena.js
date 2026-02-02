@@ -1,4 +1,5 @@
-let channelSlug = 'typography-and-interaction-too' // The “slug” is just the end of the URL
+let channelSlug = 'typography-and-interaction-too' // The “slug” is just the end of the URL.
+let myUsername = 'eric-li' // For linking to your profile.
 
 
 
@@ -162,12 +163,22 @@ fetch(`https://api.are.na/v3/channels/${channelSlug}`, { cache: 'no-store' })
 		console.log(json) // Always good to check your response!
 
 		placeChannelInfo(json) // Pass all the data to the first function, above.
-
 		renderUser(json.owner) // Pass just the nested object `.owner`.
 	})
 
 // More on `fetch`:
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch
+
+
+
+// Get your info to put with the owner’s:
+fetch(`https://api.are.na/v3/users/${myUsername}/`, { cache: 'no-store' })
+	.then((response) => response.json())
+	.then((json) => {
+		renderUser(json) // Pass this to the same function.
+	})
+
+
 
 // And the data for the blocks:
 fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=position_desc`, { cache: 'no-store' })
