@@ -1,25 +1,10 @@
-// This library allows us to process/render the descriptions, which are returned in Markdown!
-// More about Markdown: https://en.wikipedia.org/wiki/Markdown
-const markdownIt = new Promise((resolve) =>
-	document.head.appendChild(
-		Object.assign(document.createElement('script'), {
-			src: 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js',
-			onload: resolve
-		})
-	)
-)
-
-
-
-// Okay, Are.na stuff!
-let channelSlug = 'typography-and-interaction-too' // The “slug” is just the end of the URL
+let channelSlug = 'typography-and-interaction-too' // The “slug” is just the end of the URL.
+let myUsername = 'eric-li' // For linking to your profile.
 
 
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
-let placeChannelInfo = async (data) => {
-	await markdownIt // Wait for the library to load, `async`.
-
+let placeChannelInfo = (channelData) => {
 	// Target some elements in your HTML:
 	let channelTitle = document.querySelector('#channel-title')
 	let channelDescription = document.querySelector('#channel-description')
@@ -27,34 +12,38 @@ let placeChannelInfo = async (data) => {
 	let channelLink = document.querySelector('#channel-link')
 
 	// Then set their content/attributes to our data:
-	channelTitle.innerHTML = data.title
-	channelDescription.innerHTML = window.markdownit().render(data.metadata.description) // Converts Markdown → HTML
-	channelCount.innerHTML = data.length
+	channelTitle.innerHTML = channelData.title
+	channelDescription.innerHTML = channelData.description.html
+	channelCount.innerHTML = channelData.counts.blocks
 	channelLink.href = `https://www.are.na/channel/${channelSlug}`
 }
 
 
 
 // Then our big function for specific-block-type rendering:
-let renderBlock = (block) => {
+let renderBlock = (blockData) => {
 	// To start, a shared `ul` where we’ll insert all our blocks
 	let channelBlocks = document.querySelector('#channel-blocks')
 
 	// Links!
-	if (block.class == 'Link') {
+	if (blockData.type == 'Link') {
 		// Declares a “template literal” of the dynamic HTML we want.
 		let linkItem =
 			`
 			<li>
 				<p><em>Link</em></p>
-				<picture>
-					<source media="(max-width: 428px)" srcset="${ block.image.thumb.url }">
-					<source media="(max-width: 640px)" srcset="${ block.image.large.url }">
-					<img src="${ block.image.original.url }">
-				</picture>
-				<h3>${ block.title }</h3>
-				${ block.description_html }
-				<p><a href="${ block.source.url }">See the original ↗</a></p>
+				<figure>
+					<picture>
+						<source media="(width < 500px)" srcset="${ blockData.image.small.src_2x }">
+						<source media="(width < 1000px)" srcset="${ blockData.image.medium.src_2x }">
+						<img alt="${blockData.image.alt_text}" src="${ blockData.image.large.src_2x }">
+					</picture>
+					<figcaption>
+						<h3>${ blockData.title }</h3>
+						${ blockData.description.html }
+					</figcaption>
+				</figure>
+				<p><a href="${ blockData.source.url }">See the original ↗</a></p>
 			</li>
 			`
 
@@ -66,27 +55,27 @@ let renderBlock = (block) => {
 	}
 
 	// Images!
-	else if (block.class == 'Image') {
+	else if (blockData.type == 'Image') {
 		// …up to you!
 	}
 
 	// Text!
-	else if (block.class == 'Text') {
+	else if (blockData.type == 'Text') {
 		// …up to you!
 	}
 
 	// Uploaded (not linked) media…
-	else if (block.class == 'Attachment') {
-		let attachment = block.attachment.content_type // Save us some repetition
+	else if (blockData.type == 'Attachment') {
+		let contentType = blockData.attachment.content_type // Save us some repetition.
 
 		// Uploaded videos!
-		if (attachment.includes('video')) {
+		if (contentType.includes('video')) {
 			// …still up to you, but we’ll give you the `video` element:
 			let videoItem =
 				`
 				<li>
 					<p><em>Video</em></p>
-					<video controls src="${ block.attachment.url }"></video>
+					<video controls src="${ blockData.attachment.url }"></video>
 				</li>
 				`
 
@@ -97,18 +86,18 @@ let renderBlock = (block) => {
 		}
 
 		// Uploaded PDFs!
-		else if (attachment.includes('pdf')) {
+		else if (contentType.includes('pdf')) {
 			// …up to you!
 		}
 
 		// Uploaded audio!
-		else if (attachment.includes('audio')) {
+		else if (contentType.includes('audio')) {
 			// …still up to you, but here’s an `audio` element:
 			let audioItem =
 				`
 				<li>
 					<p><em>Audio</em></p>
-					<audio controls src="${ block.attachment.url }"></video>
+					<audio controls src="${ blockData.attachment.url }"></video>
 				</li>
 				`
 
@@ -119,18 +108,18 @@ let renderBlock = (block) => {
 		}
 	}
 
-	// Linked media…
-	else if (block.class == 'Media') {
-		let embed = block.embed.type
+	// Linked (embedded) media…
+	else if (blockData.type == 'Embed') {
+		let embedType = blockData.embed.type
 
 		// Linked video!
-		if (embed.includes('video')) {
+		if (embedType.includes('video')) {
 			// …still up to you, but here’s an example `iframe` element:
 			let linkedVideoItem =
 				`
 				<li>
 					<p><em>Linked Video</em></p>
-					${ block.embed.html }
+					${ blockData.embed.html }
 				</li>
 				`
 
@@ -141,7 +130,7 @@ let renderBlock = (block) => {
 		}
 
 		// Linked audio!
-		else if (embed.includes('rich')) {
+		else if (embedType.includes('rich')) {
 			// …up to you!
 		}
 	}
@@ -149,46 +138,59 @@ let renderBlock = (block) => {
 
 
 
-// A function to display the owner and collaborators:
-let renderChannelUsers = (data) => {
-	let channelUsers = document.querySelector('#channel-users') // Container here for both.
+// A function to display the owner/collaborator info:
+let renderUser = (userData) => {
+	let channelUsers = document.querySelector('#channel-users') // Container.
 
-	// You can have functions *inside* other functions, when they are only used there!
-	let renderUser = (user, container) => { // You also can have multiple arguments for a function!
-		let userAddress =
-			`
-			<address>
-				<img src="${ user.avatar_image.display }">
-				<h3>${ user.first_name }</h3>
-				<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
-			</address>
-			`
+	let userAddress =
+		`
+		<address>
+			<img src="${ userData.avatar }">
+			<h3>${ userData.name }</h3>
+			<p><a href="https://are.na/${ userData.slug }">Are.na profile ↗</a></p>
+		</address>
+		`
 
-		container.insertAdjacentHTML('beforeend', userAddress)
-	}
-
-	// Collaborators can be multiple.
-	data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
-
-	// There is only one owner.
-	renderUser(data.owner, channelUsers)
+	channelUsers.insertAdjacentHTML('beforeend', userAddress)
 }
 
 
 
-// Now that we have said all the things we *can* do, go get the data:
-fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
-	.then((response) => response.json()) // Return it as JSON data
-	.then((data) => { // Do stuff with the data.
-		console.log(data) // Always good to check your response!
+// Finally, a helper function to fetch data from the API, then run a callback function with it:
+let fetchJson = (url, callback) => {
+	fetch(url, { cache: 'no-store' })
+		.then((response) => response.json())
+		.then((json) => callback(json))
+}
 
-		placeChannelInfo(data) // Pass the data to the first function.
+// More on `fetch`:
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch
 
-		// Loop through the `contents` array (list), backwards. Are.na returns them in reverse!
-		data.contents.reverse().forEach((block) => {
-			// console.log(block) // The data for a single block.
-			renderBlock(block) // Pass the single block data to the render function.
-		})
 
-		renderChannelUsers(data) // And data for our users.
+
+// Now that we have said all the things we *can* do, go get the channel data:
+fetchJson(`https://api.are.na/v3/channels/${channelSlug}`, (json) => {
+	console.log(json) // Always good to check your response!
+
+	placeChannelInfo(json) // Pass all the data to the first function, above.
+	renderUser(json.owner) // Pass just the nested object `.owner`.
+})
+
+// Get your info to put with the owner's:
+fetchJson(`https://api.are.na/v3/users/${myUsername}/`, (json) => {
+	console.log(json) // See what we get back.
+
+	renderUser(json) // Pass this to the same function, no nesting.
+})
+
+// And the data for the blocks:
+fetchJson(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=position_desc`, (json) => {
+	console.log(json) // See what we get back.
+
+	// Loop through the nested `.data` array (list).
+	json.data.forEach((blockData) => {
+		// console.log(blockData) // The data for a single block.
+
+		renderBlock(blockData) // Pass the single block’s data to the render function.
 	})
+})

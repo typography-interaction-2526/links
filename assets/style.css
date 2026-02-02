@@ -4,7 +4,7 @@ body {
 	--spacing: 2em;
 
 	font-family: monospace;
-	font-size: 18px;
+	font-size: 1rem;
 	padding: var(--spacing);
 }
 
@@ -13,9 +13,9 @@ body, header, section, ul, li, footer, address {
 	gap: var(--spacing);
 }
 
-main { max-width: 600px }
+main { max-inline-size: 36rem }
 
 a { color: blue; }
 em { font-style: italic; }
 strong { font-weight: bold; }
-p { max-width: 50ch; }
+p { max-inline-size: 50ch; }
