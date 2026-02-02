@@ -32,13 +32,17 @@ let renderBlock = (block) => {
 			`
 			<li>
 				<p><em>Link</em></p>
-				<picture>
-					<source media="(width < 500px)" srcset="${ block.image.small.src_2x }">
-					<source media="(width < 1000px)" srcset="${ block.image.medium.src_2x }">
-					<img alt="${block.image.alt_text}" src="${ block.image.large.src_2x }">
-				</picture>
-				<h3>${ block.title }</h3>
-				${ block.description.html }
+				<figure>
+					<picture>
+						<source media="(width < 500px)" srcset="${ block.image.small.src_2x }">
+						<source media="(width < 1000px)" srcset="${ block.image.medium.src_2x }">
+						<img alt="${block.image.alt_text}" src="${ block.image.large.src_2x }">
+					</picture>
+					<figcaption>
+						<h3>${ block.title }</h3>
+						${ block.description.html }
+					</figcaption>
+				</figure>
 				<p><a href="${ block.source.url }">See the original ↗</a></p>
 			</li>
 			`
