@@ -3,7 +3,7 @@ let channelSlug = 'typography-and-interaction-too' // The “slug” is just the
 
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
-let placeChannelInfo = (data) => {
+let placeChannelInfo = (channelData) => {
 	// Target some elements in your HTML:
 	let channelTitle = document.querySelector('#channel-title')
 	let channelDescription = document.querySelector('#channel-description')
@@ -11,21 +11,21 @@ let placeChannelInfo = (data) => {
 	let channelLink = document.querySelector('#channel-link')
 
 	// Then set their content/attributes to our data:
-	channelTitle.innerHTML = data.title
-	channelDescription.innerHTML = data.description.html
-	channelCount.innerHTML = data.counts.blocks
+	channelTitle.innerHTML = channelData.title
+	channelDescription.innerHTML = channelData.description.html
+	channelCount.innerHTML = channelData.counts.blocks
 	channelLink.href = `https://www.are.na/channel/${channelSlug}`
 }
 
 
 
 // Then our big function for specific-block-type rendering:
-let renderBlock = (block) => {
+let renderBlock = (blockData) => {
 	// To start, a shared `ul` where we’ll insert all our blocks
 	let channelBlocks = document.querySelector('#channel-blocks')
 
 	// Links!
-	if (block.type == 'Link') {
+	if (blockData.type == 'Link') {
 		// Declares a “template literal” of the dynamic HTML we want.
 		let linkItem =
 			`
@@ -33,16 +33,16 @@ let renderBlock = (block) => {
 				<p><em>Link</em></p>
 				<figure>
 					<picture>
-						<source media="(width < 500px)" srcset="${ block.image.small.src_2x }">
-						<source media="(width < 1000px)" srcset="${ block.image.medium.src_2x }">
-						<img alt="${block.image.alt_text}" src="${ block.image.large.src_2x }">
+						<source media="(width < 500px)" srcset="${ blockData.image.small.src_2x }">
+						<source media="(width < 1000px)" srcset="${ blockData.image.medium.src_2x }">
+						<img alt="${blockData.image.alt_text}" src="${ blockData.image.large.src_2x }">
 					</picture>
 					<figcaption>
-						<h3>${ block.title }</h3>
-						${ block.description.html }
+						<h3>${ blockData.title }</h3>
+						${ blockData.description.html }
 					</figcaption>
 				</figure>
-				<p><a href="${ block.source.url }">See the original ↗</a></p>
+				<p><a href="${ blockData.source.url }">See the original ↗</a></p>
 			</li>
 			`
 
@@ -54,18 +54,18 @@ let renderBlock = (block) => {
 	}
 
 	// Images!
-	else if (block.type == 'Image') {
+	else if (blockData.type == 'Image') {
 		// …up to you!
 	}
 
 	// Text!
-	else if (block.type == 'Text') {
+	else if (blockData.type == 'Text') {
 		// …up to you!
 	}
 
 	// Uploaded (not linked) media…
-	else if (block.type == 'Attachment') {
-		let contentType = block.attachment.content_type // Save us some repetition.
+	else if (blockData.type == 'Attachment') {
+		let contentType = blockData.attachment.content_type // Save us some repetition.
 
 		// Uploaded videos!
 		if (contentType.includes('video')) {
@@ -74,7 +74,7 @@ let renderBlock = (block) => {
 				`
 				<li>
 					<p><em>Video</em></p>
-					<video controls src="${ block.attachment.url }"></video>
+					<video controls src="${ blockData.attachment.url }"></video>
 				</li>
 				`
 
@@ -96,7 +96,7 @@ let renderBlock = (block) => {
 				`
 				<li>
 					<p><em>Audio</em></p>
-					<audio controls src="${ block.attachment.url }"></video>
+					<audio controls src="${ blockData.attachment.url }"></video>
 				</li>
 				`
 
@@ -108,8 +108,8 @@ let renderBlock = (block) => {
 	}
 
 	// Linked (embedded) media…
-	else if (block.type == 'Embed') {
-		let embedType = block.embed.type
+	else if (blockData.type == 'Embed') {
+		let embedType = blockData.embed.type
 
 		// Linked video!
 		if (embedType.includes('video')) {
@@ -118,7 +118,7 @@ let renderBlock = (block) => {
 				`
 				<li>
 					<p><em>Linked Video</em></p>
-					${ block.embed.html }
+					${ blockData.embed.html }
 				</li>
 				`
 
@@ -138,15 +138,15 @@ let renderBlock = (block) => {
 
 
 // A function to display the owner/collaborator info:
-let renderUser = (user) => {
+let renderUser = (userData) => {
 	let channelUsers = document.querySelector('#channel-users') // Container.
 
 	let userAddress =
 		`
 		<address>
-			<img src="${ user.avatar }">
-			<h3>${ user.name }</h3>
-			<p><a href="https://are.na/${ user.slug }">Are.na profile ↗</a></p>
+			<img src="${ userData.avatar }">
+			<h3>${ userData.name }</h3>
+			<p><a href="https://are.na/${ userData.slug }">Are.na profile ↗</a></p>
 		</address>
 		`
 
@@ -166,6 +166,9 @@ fetch(`https://api.are.na/v3/channels/${channelSlug}`, { cache: 'no-store' })
 		renderUser(json.owner)
 	})
 
+// More on `fetch`:
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch
+
 // And the data for the blocks:
 fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=position_desc`, { cache: 'no-store' })
 	.then((response) => response.json())
@@ -173,8 +176,9 @@ fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=posit
 		console.log(json) // See what we get back.
 
 		// Loop through the nested .data` array (list).
-		json.data.forEach((block) => {
-			// console.log(block) // The data for a single block.
-			renderBlock(block) // Pass the single block data to the render function.
+		json.data.forEach((blockData) => {
+			// console.log(blockData) // The data for a single block.
+
+			renderBlock(blockData) // Pass the single block data to the render function.
 		})
 	})
