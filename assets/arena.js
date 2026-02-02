@@ -172,7 +172,7 @@ fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=posit
 	.then((json) => {
 		console.log(json) // See what we get back.
 
-		// Loop through the nested `data` array (list).
+		// Loop through the nested .data` array (list).
 		json.data.forEach((block) => {
 			// console.log(block) // The data for a single block.
 			renderBlock(block) // Pass the single block data to the render function.
