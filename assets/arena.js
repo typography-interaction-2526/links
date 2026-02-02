@@ -4,7 +4,7 @@ let channelSlug = 'typography-and-interaction-too' // The “slug” is just the
 
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
-let placeChannelInfo = async (data) => {
+let placeChannelInfo = (data) => {
 	// Target some elements in your HTML:
 	let channelTitle = document.querySelector('#channel-title')
 	let channelDescription = document.querySelector('#channel-description')
