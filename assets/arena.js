@@ -50,86 +50,86 @@ let renderBlock = (block) => {
 		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 	}
 
-	// // Images!
-	// else if (block.type == 'Image') {
-	// 	// …up to you!
-	// }
+	// Images!
+	else if (block.type == 'Image') {
+		// …up to you!
+	}
 
-	// // Text!
-	// else if (block.type == 'Text') {
-	// 	// …up to you!
-	// }
+	// Text!
+	else if (block.type == 'Text') {
+		// …up to you!
+	}
 
-	// // Uploaded (not linked) media…
-	// else if (block.type == 'Attachment') {
-	// 	let attachment = block.attachment.content_type // Save us some repetition
+	// Uploaded (not linked) media…
+	else if (block.type == 'Attachment') {
+		let contentType = block.attachment.content_type // Save us some repetition.
 
-	// 	// Uploaded videos!
-	// 	if (attachment.includes('video')) {
-	// 		// …still up to you, but we’ll give you the `video` element:
-	// 		let videoItem =
-	// 			`
-	// 			<li>
-	// 				<p><em>Video</em></p>
-	// 				<video controls src="${ block.attachment.url }"></video>
-	// 			</li>
-	// 			`
+		// Uploaded videos!
+		if (contentType.includes('video')) {
+			// …still up to you, but we’ll give you the `video` element:
+			let videoItem =
+				`
+				<li>
+					<p><em>Video</em></p>
+					<video controls src="${ block.attachment.url }"></video>
+				</li>
+				`
 
-	// 		channelBlocks.insertAdjacentHTML('beforeend', videoItem)
+			channelBlocks.insertAdjacentHTML('beforeend', videoItem)
 
-	// 		// More on `video`, like the `autoplay` attribute:
-	// 		// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
-	// 	}
+			// More on `video`, like the `autoplay` attribute:
+			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
+		}
 
-	// 	// Uploaded PDFs!
-	// 	else if (attachment.includes('pdf')) {
-	// 		// …up to you!
-	// 	}
+		// Uploaded PDFs!
+		else if (contentType.includes('pdf')) {
+			// …up to you!
+		}
 
-	// 	// Uploaded audio!
-	// 	else if (attachment.includes('audio')) {
-	// 		// …still up to you, but here’s an `audio` element:
-	// 		let audioItem =
-	// 			`
-	// 			<li>
-	// 				<p><em>Audio</em></p>
-	// 				<audio controls src="${ block.attachment.url }"></video>
-	// 			</li>
-	// 			`
+		// Uploaded audio!
+		else if (contentType.includes('audio')) {
+			// …still up to you, but here’s an `audio` element:
+			let audioItem =
+				`
+				<li>
+					<p><em>Audio</em></p>
+					<audio controls src="${ block.attachment.url }"></video>
+				</li>
+				`
 
-	// 		channelBlocks.insertAdjacentHTML('beforeend', audioItem)
+			channelBlocks.insertAdjacentHTML('beforeend', audioItem)
 
-	// 		// More on`audio`:
-	// 		// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
-	// 	}
-	// }
+			// More on`audio`:
+			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+		}
+	}
 
-	// // Linked media…
-	// else if (block.type == 'Media') {
-	// 	let embed = block.embed.type
+	// Linked (embedded) media…
+	else if (block.type == 'Embed') {
+		let embedType = block.embed.type
 
-	// 	// Linked video!
-	// 	if (embed.includes('video')) {
-	// 		// …still up to you, but here’s an example `iframe` element:
-	// 		let linkedVideoItem =
-	// 			`
-	// 			<li>
-	// 				<p><em>Linked Video</em></p>
-	// 				${ block.embed.html }
-	// 			</li>
-	// 			`
+		// Linked video!
+		if (embedType.includes('video')) {
+			// …still up to you, but here’s an example `iframe` element:
+			let linkedVideoItem =
+				`
+				<li>
+					<p><em>Linked Video</em></p>
+					${ block.embed.html }
+				</li>
+				`
 
-	// 		channelBlocks.insertAdjacentHTML('beforeend', linkedVideoItem)
+			channelBlocks.insertAdjacentHTML('beforeend', linkedVideoItem)
 
-	// 		// More on `iframe`:
-	// 		// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
-	// 	}
+			// More on `iframe`:
+			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+		}
 
-	// 	// Linked audio!
-	// 	else if (embed.includes('rich')) {
-	// 		// …up to you!
-	// 	}
-	// }
+		// Linked audio!
+		else if (embedType.includes('rich')) {
+			// …up to you!
+		}
+	}
 }
 
 
