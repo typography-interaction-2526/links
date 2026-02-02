@@ -1,16 +1,3 @@
-// This library allows us to process/render the descriptions, which are returned in Markdown!
-// More about Markdown: https://en.wikipedia.org/wiki/Markdown
-const markdownIt = new Promise((resolve) =>
-	document.head.appendChild(
-		Object.assign(document.createElement('script'), {
-			src: 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js',
-			onload: resolve
-		})
-	)
-)
-
-
-
 // Okay, Are.na stuff!
 let channelSlug = 'typography-and-interaction-too' // The “slug” is just the end of the URL
 
@@ -18,8 +5,6 @@ let channelSlug = 'typography-and-interaction-too' // The “slug” is just the
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
 let placeChannelInfo = async (data) => {
-	await markdownIt // Wait for the library to load, `async`.
-
 	// Target some elements in your HTML:
 	let channelTitle = document.querySelector('#channel-title')
 	let channelDescription = document.querySelector('#channel-description')
