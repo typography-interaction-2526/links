@@ -161,9 +161,9 @@ fetch(`https://api.are.na/v3/channels/${channelSlug}`, { cache: 'no-store' })
 	.then((json) => { // Do stuff with the data.
 		console.log(json) // Always good to check your response!
 
-		placeChannelInfo(json) // Pass the data to the first function.
+		placeChannelInfo(json) // Pass all the data to the first function, above.
 
-		renderUser(json.owner)
+		renderUser(json.owner) // Pass just the nested object `.owner`.
 	})
 
 // More on `fetch`:
@@ -175,10 +175,10 @@ fetch(`https://api.are.na/v3/channels/${channelSlug}/contents?per=100&sort=posit
 	.then((json) => {
 		console.log(json) // See what we get back.
 
-		// Loop through the nested .data` array (list).
+		// Loop through the nested `.data` array (list).
 		json.data.forEach((blockData) => {
 			// console.log(blockData) // The data for a single block.
 
-			renderBlock(blockData) // Pass the single block data to the render function.
+			renderBlock(blockData) // Pass the single block’s data to the render function.
 		})
 	})
