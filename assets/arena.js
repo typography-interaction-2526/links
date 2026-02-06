@@ -39,14 +39,17 @@ let renderBlock = (blockData) => {
 						<img alt="${blockData.image.alt_text}" src="${ blockData.image.large.src_2x }">
 					</picture>
 					<figcaption>
-						${ blockData.title
-							? `<h3>${ blockData.title }</h3>` // If `blockData.title` exists, do this.
-							: `<p>No title!</p>` // Otherwise do this.
-							// This is a “ternary operator”: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator
-						}
+						<h3>
+							${ blockData.title
+								? blockData.title // If `blockData.title` exists, do this.
+								: `Untitled` // Otherwise do this.
+
+								// This is a “ternary operator”: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator
+							}
+						</h3>
 						${ blockData.description // Here, checks for the object; could also write `blockData.description?.html`.
-							? blockData.description.html // Insert the HTML, no interpolation needed.
-							: `` // Otherwise can also be blank!
+							? `<div>${blockData.description.html}</div>` // Wrap/interpolate the HTML.
+							: `` // Our “otherwise” can also be blank!
 						}
 					</figcaption>
 				</figure>
