@@ -167,10 +167,25 @@ let renderUser = (userData) => {
 
 
 // Finally, a helper function to fetch data from the API, then run a callback function with it:
-let fetchJson = (url, callback) => {
+let fetchJson = (url, callback, pageResponses = []) => {
 	fetch(url, { cache: 'no-store' })
 		.then((response) => response.json())
-		.then((json) => callback(json))
+		.then((json) => {
+			// Add this page to our temporary “accumulator” list parameter (an array).
+			pageResponses.push(json)
+
+			// Are.na response includes this “there are more!” flag (a boolean):
+			if (json.meta && json.meta.has_more_pages) { // If that exists and is `true`, keep going…
+				// Fetch *another* page worth, passing along our previous/accumulated responses.
+				fetchJson(`${url}&page=${pageResponses.length + 1}`, callback, pageResponses)
+			} else { // If it is `false`, there are no more pages…
+				// “Flattens” them all together as if they were one page response.
+				json.data = pageResponses.flatMap((page) => page.data)
+
+				// Return the data to the callback!
+				callback(json)
+			}
+	})
 }
 
 // More on `fetch`:
